@@ -1,0 +1,66 @@
+/*
+ * KONBINI workbench — ticket 04. Written by hand, not auto-generated.
+ *
+ * The same block as page.lab, but inside a real page: header, page heading and
+ * copy above it, footer below. The workbench section keeps the chrome here —
+ * that is the only difference between the two templates, and it is the point.
+ * Assign this template to a page with the handle "lab-context".
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2"
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": ["heading", "page-content"],
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "padding-block-start": 40,
+        "padding-block-end": 24
+      }
+    },
+    "bench": {
+      "type": "lab-bench",
+      "blocks": {
+        "subject": {
+          "type": "text",
+          "name": "Subject",
+          "settings": {
+            "text": "<p>Drop the component under review here.</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "paragraph"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": ["subject"],
+      "settings": {
+        "stage_background": "#ffffff",
+        "show_specimen": true,
+        "padding-block-start": 24,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": ["main", "bench"]
+}

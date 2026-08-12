@@ -1,0 +1,36 @@
+/*
+ * KONBINI workbench — ticket 04. Written by hand, not auto-generated.
+ *
+ * One block, alone, on white, nothing else. The theme chrome is hidden in
+ * bare mode by the workbench section itself, keyed on this template's suffix.
+ * Assign this template to a page with the handle "lab".
+ */
+{
+  "sections": {
+    "bench": {
+      "type": "lab-bench",
+      "blocks": {
+        "subject": {
+          "type": "text",
+          "name": "Subject",
+          "settings": {
+            "text": "<p>Drop the component under review here.</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "paragraph"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": ["subject"],
+      "settings": {
+        "stage_background": "#ffffff",
+        "show_specimen": true,
+        "padding-block-start": 24,
+        "padding-block-end": 24
+      }
+    }
+  },
+  "order": ["bench"]
+}

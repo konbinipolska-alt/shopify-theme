@@ -1,0 +1,360 @@
+{% comment %}
+  KONBINI workbench — ticket 04.
+
+  The place every later component is reviewed. Not a storefront section: it is
+  never added to a customer-facing page, and its labels are deliberately in
+  English rather than translated, because only we ever see it.
+
+  Three modes, one file:
+
+    design mode   the subject renders directly, so the theme editor can select
+                  and edit the blocks inside it. No iframe — the editor cannot
+                  reach into one.
+    bench         the storefront view. A switcher bar plus an iframe of this
+                  same URL with ?bare=1. The iframe is what makes 375 ↔ 1280
+                  real on a phone: the frame has its own viewport, so Horizon's
+                  media queries fire on the frame width, not the device width.
+    bare          ?bare=1. The subject alone. On page.lab the theme chrome is
+                  hidden too; on page.lab-context it stays, which is the whole
+                  difference between the two templates.
+
+  The long-content switcher swaps any element carrying data-lab-text. Our own
+  blocks should carry it on the fields that break first — the title above all.
+  Horizon's blocks do not, so for those the specimen line below is the test.
+{% endcomment %}
+
+{%- liquid
+  assign hides_chrome = false
+  if template.suffix == 'lab'
+    assign hides_chrome = true
+  endif
+-%}
+
+<div class="lab" data-lab-hides-chrome="{{ hides_chrome }}">
+  {%- unless request.design_mode -%}
+    <div class="lab__bar" role="group" aria-label="Workbench controls">
+      <span class="lab__legend">Width</span>
+      <button type="button" class="lab__btn" data-lab-width="375" aria-pressed="true">375</button>
+      <button type="button" class="lab__btn" data-lab-width="1280" aria-pressed="false">1280</button>
+
+      <span class="lab__sep" aria-hidden="true"></span>
+
+      <span class="lab__legend">Content</span>
+      <button type="button" class="lab__btn" data-lab-long="off" aria-pressed="true">Real</button>
+      <button type="button" class="lab__btn" data-lab-long="pl" aria-pressed="false">Long pl</button>
+      <button type="button" class="lab__btn" data-lab-long="ja" aria-pressed="false">ja</button>
+      <button type="button" class="lab__btn" data-lab-long="ko" aria-pressed="false">ko</button>
+
+      <span class="lab__scale" data-lab-scale></span>
+    </div>
+
+    <div class="lab__stage" data-lab-stage>
+      <iframe
+        class="lab__frame"
+        title="Component under review"
+        data-lab-frame
+        src="about:blank"
+        loading="eager"
+      ></iframe>
+    </div>
+  {%- endunless -%}
+
+  <div
+    class="lab__subject spacing-style"
+    data-lab-subject
+    style="background: {{ section.settings.stage_background | default: '#ffffff' }}; {% render 'spacing-padding', settings: section.settings %}"
+  >
+    {% content_for 'blocks' %}
+
+    {%- if section.settings.show_specimen -%}
+      <p class="lab__specimen" data-lab-text>{{ section.settings.title_real }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lab__bar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    background: #111;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .lab__legend {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6f6f6f;
+    margin-right: 2px;
+  }
+
+  .lab__btn {
+    appearance: none;
+    border: 1px solid #444;
+    background: transparent;
+    color: #bbb;
+    font: inherit;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  .lab__btn[aria-pressed='true'] {
+    background: #fff;
+    border-color: #fff;
+    color: #111;
+  }
+
+  .lab__btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .lab__sep {
+    width: 1px;
+    height: 18px;
+    background: #3a3a3a;
+    margin: 0 4px;
+  }
+
+  .lab__scale {
+    margin-left: auto;
+    font-size: 11px;
+    color: #8a8a8a;
+  }
+
+  .lab__stage {
+    overflow: hidden;
+    background: #e7e7e5;
+  }
+
+  .lab__frame {
+    display: block;
+    border: 0;
+    transform-origin: top left;
+    background: #fff;
+  }
+
+  /* The subject is rendered in every mode so the theme editor can reach it,
+     but on the storefront bench it is the iframe that gets looked at. */
+  .lab--bench .lab__subject {
+    display: none;
+  }
+
+  .lab--bare .lab__bar,
+  .lab--bare .lab__stage {
+    display: none;
+  }
+
+  .lab__specimen {
+    margin: 0;
+    font-size: 15px;
+    text-wrap: pretty;
+  }
+
+  /* Bare mode on page.lab only: one block, alone, on white, nothing else. */
+  html.lab-no-chrome #header-group,
+  html.lab-no-chrome footer,
+  html.lab-no-chrome .shopify-section-group-header-group {
+    display: none !important;
+  }
+{% endstylesheet %}
+
+<script>
+  (function () {
+    var root = document.querySelector('.lab');
+    if (!root) return;
+
+    var params = new URLSearchParams(window.location.search);
+    var isBare = params.get('bare') === '1';
+    var subject = root.querySelector('[data-lab-subject]');
+
+    var strings = {
+      off: {{ section.settings.title_real | json }},
+      pl: {{ section.settings.title_long | json }},
+      ja: {{ section.settings.title_ja | json }},
+      ko: {{ section.settings.title_ko | json }}
+    };
+    var locales = { off: null, pl: 'pl', ja: 'ja', ko: 'ko' };
+
+    /* ---------- bare: the subject alone ---------- */
+    if (isBare) {
+      root.classList.add('lab--bare');
+      if (root.dataset.labHidesChrome === 'true') {
+        document.documentElement.classList.add('lab-no-chrome');
+      }
+
+      var pick = params.get('long') || 'off';
+      if (strings[pick]) {
+        var lang = locales[pick];
+        subject.querySelectorAll('[data-lab-text]').forEach(function (node) {
+          node.textContent = strings[pick];
+          if (lang) {
+            node.setAttribute('lang', lang);
+          } else {
+            node.removeAttribute('lang');
+          }
+        });
+      }
+      return;
+    }
+
+    /* ---------- bench: switchers driving an iframe ---------- */
+    var bar = root.querySelector('.lab__bar');
+    if (!bar) return; // design mode renders the subject directly
+
+    root.classList.add('lab--bench');
+
+    var stage = root.querySelector('[data-lab-stage]');
+    var frame = root.querySelector('[data-lab-frame]');
+    var readout = root.querySelector('[data-lab-scale]');
+    var state = { width: 375, long: 'off' };
+
+    function press(attr, value) {
+      bar.querySelectorAll('[' + attr + ']').forEach(function (btn) {
+        btn.setAttribute('aria-pressed', String(btn.getAttribute(attr) === value));
+      });
+    }
+
+    function fit() {
+      var available = stage.clientWidth;
+      var scale = Math.min(1, available / state.width);
+      frame.style.width = state.width + 'px';
+      frame.style.transform = 'scale(' + scale + ')';
+
+      var inner = 1200;
+      try {
+        var doc = frame.contentDocument;
+        if (doc && doc.body) {
+          inner = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 320);
+        }
+      } catch (e) {
+        /* same-origin only; the fallback height is fine */
+      }
+      frame.style.height = inner + 'px';
+      stage.style.height = Math.ceil(inner * scale) + 'px';
+
+      readout.textContent = state.width + ' px · ' + Math.round(scale * 100) + '%';
+    }
+
+    function load() {
+      var url = window.location.pathname + '?bare=1&long=' + encodeURIComponent(state.long);
+      frame.src = url;
+    }
+
+    frame.addEventListener('load', function () {
+      fit();
+      // Type and images settle after first paint; measure again once they have.
+      setTimeout(fit, 300);
+    });
+
+    bar.addEventListener('click', function (event) {
+      var btn = event.target.closest('button');
+      if (!btn) return;
+
+      if (btn.hasAttribute('data-lab-width')) {
+        state.width = parseInt(btn.getAttribute('data-lab-width'), 10);
+        press('data-lab-width', String(state.width));
+        fit();
+        return;
+      }
+
+      if (btn.hasAttribute('data-lab-long')) {
+        state.long = btn.getAttribute('data-lab-long');
+        press('data-lab-long', state.long);
+        load();
+      }
+    });
+
+    window.addEventListener('resize', fit);
+    load();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Workbench",
+  "tag": "section",
+  "blocks": [{ "type": "@theme" }, { "type": "@app" }],
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Stage"
+    },
+    {
+      "type": "color",
+      "id": "stage_background",
+      "label": "Stage background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_specimen",
+      "label": "Show the specimen line",
+      "info": "A single line carrying data-lab-text, so the content switcher is visible even before a component under review carries the attribute itself.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Long content"
+    },
+    {
+      "type": "text",
+      "id": "title_real",
+      "label": "Real title",
+      "default": "Mirin"
+    },
+    {
+      "type": "text",
+      "id": "title_long",
+      "label": "Longest Polish title",
+      "info": "The worst case the card has to survive. Refresh it from the store when a longer one is found.",
+      "default": "YAMACHU Gochujang Korean Chili Paste / Pikantna pasta z chili 40 g"
+    },
+    {
+      "type": "text",
+      "id": "title_ja",
+      "label": "Japanese title",
+      "default": "ヤマチュウ コチュジャン 韓国唐辛子味噌 ピリ辛チリペースト 40 g"
+    },
+    {
+      "type": "text",
+      "id": "title_ko",
+      "label": "Korean title",
+      "default": "야마추 고추장 한국 고추 페이스트 매운 칠리 페이스트 40 g"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    }
+  ]
+}
+{% endschema %}
