@@ -10,13 +10,19 @@
     design mode   the subject renders directly, so the theme editor can select
                   and edit the blocks inside it. No iframe — the editor cannot
                   reach into one.
-    bench         the storefront view. A switcher bar plus an iframe of this
-                  same URL with ?bare=1. The iframe is what makes 375 ↔ 1280
-                  real on a phone: the frame has its own viewport, so Horizon's
-                  media queries fire on the frame width, not the device width.
-    bare          ?bare=1. The subject alone. On page.lab the theme chrome is
-                  hidden too; on page.lab-context it stays, which is the whole
-                  difference between the two templates.
+    bench         the storefront view. A switcher bar plus a frame carrying
+                  this same page. The frame is what makes 375 ↔ 1280 real on a
+                  phone: it has its own viewport, so Horizon's media queries
+                  fire on the frame width, not the device width.
+
+                  It is fed by fetch and document.write rather than pointed at
+                  a URL, because Shopify serves the storefront with
+                  x-frame-options: DENY and frame-ancestors 'none' — framing
+                  the page by src is refused even same-origin. See load().
+    bare          the subject alone, entered either by ?bare=1 in the address
+                  bar or by the boot class the bench writes in. On page.lab the
+                  theme chrome is hidden too; on page.lab-context it stays,
+                  which is the whole difference between the two templates.
 
   The long-content switcher swaps any element carrying data-lab-text. Our own
   blocks should carry it on the fields that break first — the title above all.
@@ -173,7 +179,13 @@
     if (!root) return;
 
     var params = new URLSearchParams(window.location.search);
-    var isBare = params.get('bare') === '1';
+    var docEl = document.documentElement;
+
+    /* Two ways in to bare mode. The query string is for opening the bare view
+       directly in a tab. The boot class is how the bench does it: the frame is
+       written into rather than navigated to, so it has no query string of its
+       own — see load() for why it cannot simply be pointed at the URL. */
+    var isBare = docEl.classList.contains('lab-bare-boot') || params.get('bare') === '1';
     var subject = root.querySelector('[data-lab-subject]');
 
     var strings = {
@@ -191,7 +203,7 @@
         document.documentElement.classList.add('lab-no-chrome');
       }
 
-      var pick = params.get('long') || 'off';
+      var pick = docEl.getAttribute('data-lab-long') || params.get('long') || 'off';
       if (strings[pick]) {
         var lang = locales[pick];
         subject.querySelectorAll('[data-lab-text]').forEach(function (node) {
@@ -244,16 +256,45 @@
       readout.textContent = state.width + ' px · ' + Math.round(scale * 100) + '%';
     }
 
-    function load() {
-      var url = window.location.pathname + '?bare=1&long=' + encodeURIComponent(state.long);
-      frame.src = url;
-    }
+    /* The frame is fed, not navigated.
 
-    frame.addEventListener('load', function () {
-      fit();
-      // Type and images settle after first paint; measure again once they have.
-      setTimeout(fit, 300);
-    });
+       Shopify serves the storefront with `x-frame-options: DENY` and
+       `frame-ancestors 'none'`, so <iframe src="/pages/lab"> is refused even
+       same-origin — confirmed against the live headers, not assumed. What is
+       not refused is fetching the same page and writing it into a blank
+       same-origin frame: no navigation, no framing headers to enforce.
+
+       The written document has no query string, so bare mode is handed to it
+       as a class on <html> before the write. A <base> goes in with it, since
+       relative URLs would otherwise resolve against about:blank. */
+    function load() {
+      var url = window.location.pathname;
+
+      fetch(url, { credentials: 'same-origin' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.text();
+        })
+        .then(function (html) {
+          html = html
+            .replace(/<html/i, '<html class="lab-bare-boot" data-lab-long="' + state.long + '"')
+            .replace(/<head([^>]*)>/i, '<head$1><base href="' + window.location.origin + '/">');
+
+          var doc = frame.contentDocument;
+          doc.open();
+          doc.write(html);
+          doc.close();
+
+          fit();
+          // Type, images and the section's own stylesheet settle after first
+          // paint; measure again once they have.
+          setTimeout(fit, 400);
+          setTimeout(fit, 1200);
+        })
+        .catch(function (error) {
+          readout.textContent = 'load failed — ' + error.message;
+        });
+    }
 
     bar.addEventListener('click', function (event) {
       var btn = event.target.closest('button');
