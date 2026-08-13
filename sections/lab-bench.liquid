@@ -245,7 +245,11 @@
       try {
         var doc = frame.contentDocument;
         if (doc && doc.body) {
-          inner = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 320);
+          /* Collapse before measuring. The frame's own height is what
+             scrollHeight reports back once it is set, so measuring without
+             this makes the stage grow and never shrink. */
+          frame.style.height = '0px';
+          inner = Math.max(doc.body.scrollHeight, 320);
         }
       } catch (e) {
         /* same-origin only; the fallback height is fine */
