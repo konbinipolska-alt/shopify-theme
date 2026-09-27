@@ -1,0 +1,63 @@
+{%- doc -%}
+  KONBINI overrides for the product card quick-add button.
+
+  Turns Horizon's expanding pill into a quiet round icon in the bottom-right
+  corner of the card image: white disc, dark outline icon at a 1px stroke,
+  soft shadow, no label. It shows on card hover where the device can hover,
+  and stays visible on touch devices when "Quick add on mobile" is on.
+
+  Selectors repeat `.quick-add` to outrank `quick-add-styles` without
+  depending on stylesheet order. Horizon's snippet stays untouched.
+
+  @example
+  {% render 'konbini-quick-add-styles' %}
+{%- enddoc -%}
+
+{% stylesheet %}
+  .quick-add button.quick-add__button {
+    --quick-add-collapsed-width: 36px;
+    --quick-add-icon-width: var(--quick-add-collapsed-width);
+    --icon-stroke-width: 1px;
+
+    width: var(--quick-add-collapsed-width);
+    height: var(--quick-add-collapsed-width);
+    min-width: 0;
+    background: #fff;
+    border: 0;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 14px rgb(0 0 0 / 0.08);
+    backdrop-filter: none;
+
+    @media screen and (min-width: 750px) {
+      --quick-add-collapsed-width: 40px;
+    }
+
+    &:hover {
+      scale: 1.04;
+    }
+  }
+
+  /* The icon box fills the whole disc, so the label that follows it is
+     pushed out of view and the glyph sits dead centre. */
+  .quick-add button.quick-add__button > .add-to-cart-icon > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Icon only: never expand into a labelled pill. The label text stays in the
+     DOM, clipped by overflow, so screen readers still announce it. */
+  @media screen and (min-width: 750px) {
+    .quick-add button.quick-add__button:is(:hover, :focus-visible) {
+      width: var(--quick-add-collapsed-width);
+      padding-inline-end: 0;
+    }
+  }
+
+  /* Tablets are 750px+ but cannot hover, so Horizon would hide the button for
+     good. Follow the mobile setting there instead. */
+  @media screen and (min-width: 750px) and (hover: none) {
+    .quick-add button.quick-add__button {
+      display: var(--quick-add-mobile-display, none);
+      opacity: var(--quick-add-mobile-opacity, 0);
+    }
+  }
+{% endstylesheet %}
