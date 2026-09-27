@@ -1,7 +1,9 @@
 /*
  * KONBINI workbench — ticket 04. Written by hand, not auto-generated.
  *
- * One block, alone, on white, nothing else. The theme chrome is hidden in
+ * Currently reviewing: the product card quick-add icon. Two rows of two
+ * real product cards, as on the mobile grid. Swap the products in the theme
+ * editor to test other shapes. The theme chrome is hidden in
  * bare mode by the workbench section itself, keyed on this template's suffix.
  * Assign this template to a page with the handle "lab".
  */
@@ -10,27 +12,208 @@
     "bench": {
       "type": "lab-bench",
       "blocks": {
-        "subject": {
-          "type": "text",
-          "name": "Subject",
+        "cards_titles": {
+          "type": "group",
+          "name": "Cards: short and long title",
           "settings": {
-            "text": "<p>Drop the component under review here.</p>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "paragraph"
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "vertical_alignment": "flex-start",
+            "gap": 12,
+            "width": "fill",
+            "width_mobile": "fill"
           },
-          "blocks": {}
+          "blocks": {
+            "a": {
+              "type": "product-card",
+              "settings": {
+                "product": "yamamoto-matcha-rocky-50-g",
+                "product_card_gap": 4,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "gallery": {
+                  "type": "_product-card-gallery",
+                  "settings": {
+                    "image_ratio": "square",
+                    "border": "none",
+                    "border_radius": 0
+                  }
+                },
+                "title": {
+                  "type": "product-title",
+                  "settings": {
+                    "type_preset": "paragraph",
+                    "padding-block-start": 4
+                  }
+                },
+                "price": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "type_preset": "h6"
+                  }
+                }
+              },
+              "block_order": [
+                "gallery",
+                "title",
+                "price"
+              ]
+            },
+            "b": {
+              "type": "product-card",
+              "settings": {
+                "product": "ice-talk-zero-sugar-peach-iced-tea-bezcukrowa-lemoniada-o-smaku-mrozonej-brzoskwiniowej-herbaty-230-ml",
+                "product_card_gap": 4,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "gallery": {
+                  "type": "_product-card-gallery",
+                  "settings": {
+                    "image_ratio": "square",
+                    "border": "none",
+                    "border_radius": 0
+                  }
+                },
+                "title": {
+                  "type": "product-title",
+                  "settings": {
+                    "type_preset": "paragraph",
+                    "padding-block-start": 4
+                  }
+                },
+                "price": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "type_preset": "h6"
+                  }
+                }
+              },
+              "block_order": [
+                "gallery",
+                "title",
+                "price"
+              ]
+            }
+          },
+          "block_order": [
+            "a",
+            "b"
+          ]
+        },
+        "cards_states": {
+          "type": "group",
+          "name": "Cards: sold out and in stock",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "vertical_alignment": "flex-start",
+            "gap": 12,
+            "width": "fill",
+            "width_mobile": "fill"
+          },
+          "blocks": {
+            "a": {
+              "type": "product-card",
+              "settings": {
+                "product": "binggrae-lody-melona-kokosowe-70-ml",
+                "product_card_gap": 4,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "gallery": {
+                  "type": "_product-card-gallery",
+                  "settings": {
+                    "image_ratio": "square",
+                    "border": "none",
+                    "border_radius": 0
+                  }
+                },
+                "title": {
+                  "type": "product-title",
+                  "settings": {
+                    "type_preset": "paragraph",
+                    "padding-block-start": 4
+                  }
+                },
+                "price": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "type_preset": "h6"
+                  }
+                }
+              },
+              "block_order": [
+                "gallery",
+                "title",
+                "price"
+              ]
+            },
+            "b": {
+              "type": "product-card",
+              "settings": {
+                "product": "koikeya-potato-chips-teriyaki-100-g",
+                "product_card_gap": 4,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "gallery": {
+                  "type": "_product-card-gallery",
+                  "settings": {
+                    "image_ratio": "square",
+                    "border": "none",
+                    "border_radius": 0
+                  }
+                },
+                "title": {
+                  "type": "product-title",
+                  "settings": {
+                    "type_preset": "paragraph",
+                    "padding-block-start": 4
+                  }
+                },
+                "price": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "type_preset": "h6"
+                  }
+                }
+              },
+              "block_order": [
+                "gallery",
+                "title",
+                "price"
+              ]
+            }
+          },
+          "block_order": [
+            "a",
+            "b"
+          ]
         }
       },
-      "block_order": ["subject"],
+      "block_order": [
+        "cards_titles",
+        "cards_states"
+      ],
       "settings": {
         "stage_background": "#ffffff",
-        "show_specimen": true,
+        "show_specimen": false,
         "padding-block-start": 24,
         "padding-block-end": 24
       }
     }
   },
-  "order": ["bench"]
+  "order": [
+    "bench"
+  ]
 }
