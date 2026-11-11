@@ -82,7 +82,8 @@ HEADER = """/*
  *
  * Currently reviewing: the product card (ticket 11). Five rows of two real
  * product cards on the mobile grid, each row one test. Assign this template
- * to a page with the handle "lab".
+ * to a page with the handle "lab". Card titles carry placeholder translations
+ * for the workbench language switch.
  */
 """
 
