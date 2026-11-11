@@ -146,7 +146,7 @@
           "name": "t:names.product_card",
           "static": true,
           "settings": {
-            "product_card_gap": 4,
+            "product_card_gap": 0,
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
@@ -161,7 +161,7 @@
               "type": "_product-card-gallery",
               "name": "t:names.product_card_media",
               "settings": {
-                "image_ratio": "adapt",
+                "image_ratio": "square",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
@@ -190,7 +190,7 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 4,
+                "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
@@ -218,10 +218,14 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "chips": {
+              "type": "konbini-card-chips"
             }
           },
           "block_order": [
             "product_card_gallery_PEPpfq",
+            "chips",
             "product_title_WNMpHe",
             "price_yXfkPX"
           ]
@@ -236,7 +240,7 @@
         "columns": 4,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
-        "columns_gap": 8,
+        "columns_gap": 13,
         "rows_gap": 24,
         "icons_style": "arrow",
         "icons_shape": "none",
