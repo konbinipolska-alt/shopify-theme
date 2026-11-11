@@ -73,6 +73,8 @@
   }
 
   .product-card.product-card .product-card__content > a.contents > .text-block p {
+    /* Full width, so its line length does not depend on how much text it holds. */
+    width: 100%;
     margin: 0;
     color: var(--konbini-tint-900);
     font-size: 13px;
@@ -148,6 +150,17 @@
     .product-card:hover .konbini-title__rest {
       animation: none;
     }
+  }
+
+  /* No badge on the card (ticket 11): the struck price shows a sale, and
+     last-call keeps its own collection. */
+  .product-card.product-card .product-badges {
+    display: none;
+  }
+
+  .product-card.product-card product-price .compare-at-price {
+    color: #939393;
+    font-weight: 500;
   }
 
   .product-card.product-card product-price {

@@ -18,9 +18,11 @@ PRODUCTS = [
     ("yamachu-doubanjiang-chinese-chili-paste-ostra-pasta-z-fermentowanego-bobu-i-chili-40-g", "long"),
     ("marutomo-dashinomoto-shin-katsuo-bonito-soup-stock-dashi-no-moto-bulion-rybny-katsuo-dashi-8-x-6g-48-g",
      "over the clamp, size in brackets"),
-    # Row 3: the Pocari case. Titles that differ only in the size.
+    # Row 3: a bracketed second size, next to a sold-out product with a very long title.
+    # (The sold-out Pocari sizes are not published, so the storefront cannot draw them.)
     ("pocari-sweat-ion-supply-drink-japonski-napoj-izotoniczny-74-g-1-l", "in stock"),
-    ("pocari-sweat-ion-supply-drink-japonski-napoj-izotoniczny-300-ml", "sold out"),
+    ("azjatyckie-jezyki-ksiazka-zwierzeta-po-polsku-i-po-japonsku-japonski-dla-dzieci-nauka-japonskiego-dla-najmlodszych",
+     "sold out, 118 characters, no size"),
     # Row 4: a sale price, and a size that is not at the end of the title.
     ("ottogi-instant-noodles-jin-ramen-mild-120-g-zupa-jin-ramen-lagodna", "on sale, size mid-title"),
     ("lotte-paluszki-pepero-z-nadzieniem-czekoladowym-45-g", "on sale"),

@@ -91,6 +91,8 @@ function sizeElement(size) {
  */
 function fit(title, target) {
   const full = (title.textContent || '').trim().replace(/\s+/g, ' ');
+  // Read while the title still holds its text: an emptied title has no width.
+  const lineWidth = title.getBoundingClientRect().width;
   title.dataset.konbiniTitle = full;
   title.setAttribute('title', full);
 
@@ -124,8 +126,6 @@ function fit(title, target) {
     sizeWidth = probe.getBoundingClientRect().width + 4;
     title.textContent = '';
   }
-  const lineWidth = title.getBoundingClientRect().width;
-
   if (kept > 0) title.append(words.slice(0, kept).join(join) + join);
 
   const windowElement = document.createElement('span');
