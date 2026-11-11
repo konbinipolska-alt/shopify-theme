@@ -36,8 +36,9 @@
   /* The card owns its own vertical rhythm: 10px under the photograph, 9px
      above the price. Horizon's uniform gap would add to both. */
   .product-card.product-card .product-card__content {
-    --product-card-gap: 0px;
-
+    /* Set as a property: Horizon writes the gap variable inline, which a
+       stylesheet cannot outrank. */
+    gap: 0;
     height: 100%;
   }
 
@@ -49,10 +50,22 @@
     mix-blend-mode: multiply;
   }
 
-  .product-card.product-card .product-card__content > a.contents > .text-block {
-    --padding-block-start: 0px;
+  /* No photograph: the bare tile is the state (ticket 01). Horizon prints the
+     title inside it in display type; the title already sits under the tile. */
+  .product-card.product-card .product-card-gallery__title-placeholder {
+    aspect-ratio: 1;
+    padding: 0;
+    background: var(--konbini-tint-25);
+    border-radius: 0;
+  }
 
+  .product-card.product-card .product-card-gallery__title-placeholder .title-text {
+    display: none;
+  }
+
+  .product-card.product-card .product-card__content > a.contents > .text-block {
     width: 100%;
+    padding-block-start: 0;
     max-width: none;
     margin-block-start: 10px;
   }
