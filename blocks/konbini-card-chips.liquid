@@ -15,7 +15,12 @@
     data-konbini-was="on"         the struck pre-discount price shows
     data-konbini-flags="new best" which flags show
 
-  A sold-out product has no chips, as it has no quick-add.
+  A sold-out product has no chips, as it has no quick-add. It gets one line of
+  microcopy under the title in place of the price: "Już niedługo znowu
+  dostępny". The store never states absence (ticket 15), so there is no
+  "sold out" wording and no struck or greyed price. This is the words-only
+  reading from ticket 11; the alert and the substitutes belong to the product
+  page until tickets 26 and 46 are resolved.
 
   Flags come from the data:
     new   published within the "new for" window
@@ -77,6 +82,8 @@
       {%- endif -%}
     </div>
   </div>
+{%- elsif product != blank -%}
+  <p class="konbini-card-soon" {{ block.shopify_attributes }}>{{ settings.konbini_label_soon }}</p>
 {%- endif -%}
 
 {% stylesheet %}
@@ -157,6 +164,21 @@
 
   html[data-konbini-was='on'] .konbini-chip__was {
     display: inline;
+  }
+
+  /* Sold out: the line sits under the title, wherever the block is placed
+     in the card, and the price is not shown at all. */
+  .konbini-card-soon {
+    order: 1;
+    margin: 5px 0 0;
+    color: #646464;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .product-card.product-card .product-card__content:has(.konbini-card-soon) product-price {
+    display: none;
   }
 
   @media screen and (min-width: 750px) {

@@ -455,8 +455,9 @@
       );
 
       /* Flag labels follow the language too. Polish is what the theme wrote. */
-      ['new', 'low', 'best'].forEach(function (flag) {
-        doc.querySelectorAll('.konbini-chip--' + flag).forEach(function (chip) {
+      ['new', 'low', 'best', 'soon'].forEach(function (flag) {
+        var selector = flag === 'soon' ? '.konbini-card-soon' : '.konbini-chip--' + flag;
+        doc.querySelectorAll(selector).forEach(function (chip) {
           if (chip.dataset.labOriginal === undefined) chip.dataset.labOriginal = chip.textContent.trim();
           var label = state.lang === 'pl' ? null : (flagLabels[flag] || {})[state.lang];
           chip.textContent = label || chip.dataset.labOriginal;

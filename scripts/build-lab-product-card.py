@@ -82,6 +82,7 @@ FLAGS = {
     "new": {"en": "New", "ja": "新着", "ko": "신상품"},
     "low": {"en": "Low stock", "ja": "残りわずか", "ko": "재고 임박"},
     "best": {"en": "Bestseller", "ja": "人気商品", "ko": "베스트셀러"},
+    "soon": {"en": "Back in stock soon", "ja": "まもなく再入荷", "ko": "곧 재입고 예정"},
 }
 
 HEADER = """/*

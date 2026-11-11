@@ -2149,6 +2149,17 @@
       },
       {
         "type": "header",
+        "content": "Sold out"
+      },
+      {
+        "type": "text",
+        "id": "konbini_label_soon",
+        "label": "Sold-out line",
+        "info": "Shown under the title in place of the price. The store never states absence, so this says when, not what is missing.",
+        "default": "Już niedługo znowu dostępny"
+      },
+      {
+        "type": "header",
         "content": "Flags (chip mode only)"
       },
       {

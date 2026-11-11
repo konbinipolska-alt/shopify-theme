@@ -66,6 +66,11 @@
       "en": "Bestseller",
       "ja": "人気商品",
       "ko": "베스트셀러"
+    },
+    "soon": {
+      "en": "Back in stock soon",
+      "ja": "まもなく再入荷",
+      "ko": "곧 재입고 예정"
     }
   }
 }
