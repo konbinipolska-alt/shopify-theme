@@ -152,5 +152,8 @@
       {% render 'quick-add-modal' %}
       {% render 'konbini-quick-add-styles' %}
     {% endif %}
+
+    {% comment %} Not tied to quick-add: the card is styled whether or not the icon shows. {% endcomment %}
+    {% render 'konbini-product-card-styles' %}
   </body>
 </html>

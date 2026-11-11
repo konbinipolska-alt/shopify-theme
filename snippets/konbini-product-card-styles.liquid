@@ -1,0 +1,102 @@
+{%- doc -%}
+  KONBINI overrides for the product card — ticket 11.
+
+  The card is the photograph, the title and the price, plus the quick-add
+  icon that `konbini-quick-add-styles` draws. Values come from the resolved
+  ticket and its specimen (`Wayfinder/assets/11-product-card-build.py`):
+
+  - Photograph: 1:1 on a tint-25 tile, multiplied onto it. The tile is also
+    the no-image state.
+  - Title: the full catalogue title (decision D9), 13px, Medium, tint-900.
+    Up to three lines on narrow screens, where two lines would cut the size
+    off the end. Untruncated from 750px up.
+  - Price: 13px, Bold, tint-950, tabular figures.
+  - The price is pushed to the foot of the card, so every price in a grid row
+    lands on one line at whatever height that row's longest title needs.
+  - Line height and breaking follow the language (ticket 30).
+
+  Not here yet: the size-keeping cut and row alignment (needs a script), the
+  sold-out wording, and the chip mode.
+
+  Tint values are written out until ticket 41 delivers tokens from Figma.
+  Selectors repeat `.product-card` to outrank Horizon without depending on
+  stylesheet order. Horizon's snippets stay untouched.
+
+  @example
+  {% render 'konbini-product-card-styles' %}
+{%- enddoc -%}
+
+{% stylesheet %}
+  .product-card.product-card {
+    --konbini-tint-25: #fafafa;
+    --konbini-tint-900: #373737;
+    --konbini-tint-950: #232323;
+  }
+
+  /* The card owns its own vertical rhythm: 10px under the photograph, 9px
+     above the price. Horizon's uniform gap would add to both. */
+  .product-card.product-card .product-card__content {
+    --product-card-gap: 0px;
+
+    height: 100%;
+  }
+
+  .product-card.product-card .card-gallery {
+    background: var(--konbini-tint-25);
+  }
+
+  .product-card.product-card .card-gallery img {
+    mix-blend-mode: multiply;
+  }
+
+  .product-card.product-card .product-card__content > a.contents > .text-block {
+    --padding-block-start: 0px;
+
+    width: 100%;
+    max-width: none;
+    margin-block-start: 10px;
+  }
+
+  .product-card.product-card .product-card__content > a.contents > .text-block p {
+    margin: 0;
+    color: var(--konbini-tint-900);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-wrap: pretty;
+  }
+
+  .product-card.product-card .product-card__content > a.contents > .text-block p:lang(ja) {
+    line-height: 1.75;
+    line-break: strict;
+  }
+
+  .product-card.product-card .product-card__content > a.contents > .text-block p:lang(ko) {
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-card.product-card .product-card__content > a.contents > .text-block p {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+    }
+  }
+
+  .product-card.product-card product-price {
+    margin-block-start: auto;
+    padding-block-start: 9px;
+  }
+
+  .product-card.product-card product-price .price {
+    color: var(--konbini-tint-950);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+{% endstylesheet %}

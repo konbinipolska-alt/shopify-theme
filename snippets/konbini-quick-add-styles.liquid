@@ -2,7 +2,7 @@
   KONBINI overrides for the product card quick-add button.
 
   Turns Horizon's expanding pill into a quiet round icon in the bottom-right
-  corner of the card image: white disc, dark outline icon at a 1px stroke,
+  corner of the card image, 8px in: a 32px white disc (36px from 750px up), dark outline icon at a 1px stroke,
   soft shadow, no label. It shows on card hover where the device can hover,
   and stays visible on touch devices when "Quick add on mobile" is on.
 
@@ -15,7 +15,7 @@
 
 {% stylesheet %}
   .quick-add button.quick-add__button {
-    --quick-add-collapsed-width: 36px;
+    --quick-add-collapsed-width: 32px;
     --quick-add-icon-width: var(--quick-add-collapsed-width);
     --icon-stroke-width: 1px;
 
@@ -28,7 +28,7 @@
     backdrop-filter: none;
 
     @media screen and (min-width: 750px) {
-      --quick-add-collapsed-width: 40px;
+      --quick-add-collapsed-width: 36px;
     }
 
     &:hover {
@@ -39,8 +39,13 @@
   /* The icon box fills the whole disc, so the label that follows it is
      pushed out of view and the glyph sits dead centre. */
   .quick-add button.quick-add__button > .add-to-cart-icon > svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+
+    @media screen and (min-width: 750px) {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   /* Icon only: never expand into a labelled pill. The label text stays in the
