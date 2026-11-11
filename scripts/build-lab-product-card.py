@@ -82,8 +82,8 @@ HEADER = """/*
  *
  * Currently reviewing: the product card (ticket 11). Five rows of two real
  * product cards on the mobile grid, each row one test. Assign this template
- * to a page with the handle "lab". Card titles carry placeholder translations
- * for the workbench language switch.
+ * to a page with the handle "lab". Placeholder translations for the language
+ * switch go to assets/lab-product-card-translations.json.
  */
 """
 
@@ -125,7 +125,6 @@ def build():
                     "layout": "grid",
                     "stage_background": "#ffffff",
                     "show_specimen": False,
-                    "translations": json.dumps(TRANSLATIONS, ensure_ascii=False),
                     "padding-block-start": 24,
                     "padding-block-end": 24,
                 },
@@ -140,6 +139,12 @@ def build():
         json.dump(template, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
     print("wrote", path, "with", len(blocks), "cards")
+
+    path = os.path.join(root, "assets", "lab-product-card-translations.json")
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(TRANSLATIONS, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+    print("wrote", path)
 
 
 if __name__ == "__main__":

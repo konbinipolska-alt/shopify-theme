@@ -339,14 +339,11 @@
     var locales = { off: null, pl: 'pl', ja: 'ja', ko: 'ko' };
 
     /* Placeholder translations per product handle, written by the build
-       script. What is real is how each script wraps, not the wording. */
+       script to an asset. They are fetched, not passed through a template
+       setting: Shopify dropped the setting from the stored template. What is
+       real is how each script wraps, not the wording. */
     var translations = {};
-    try {
-      /* No Liquid default here: a literal '{}' ends the output tag early. */
-      translations = JSON.parse({{ section.settings.translations | json }} || '{}');
-    } catch (e) {
-      translations = {};
-    }
+    var translationsUrl = {{ 'lab-product-card-translations.json' | asset_url | json }};
 
     /* ---------- bare: the subject alone ---------- */
     if (isBare) {
@@ -566,6 +563,18 @@
 
     window.addEventListener('resize', size);
     load();
+
+    fetch(translationsUrl)
+      .then(function (response) {
+        return response.ok ? response.json() : {};
+      })
+      .then(function (data) {
+        translations = data || {};
+        refresh();
+      })
+      .catch(function () {
+        /* The language switch then keeps the Polish titles. */
+      });
   })();
 </script>
 
@@ -602,12 +611,6 @@
       "label": "Show the specimen line",
       "info": "A single line carrying data-lab-text, so the content switcher is visible even before a component under review carries the attribute itself.",
       "default": true
-    },
-    {
-      "type": "textarea",
-      "id": "translations",
-      "label": "Card title translations (JSON)",
-      "info": "Written by scripts/build-lab-product-card.py. Keyed by product handle, then en, ja, ko."
     },
     {
       "type": "header",
