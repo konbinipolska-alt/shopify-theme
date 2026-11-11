@@ -11,7 +11,7 @@
                   and edit the blocks inside it. No iframe — the editor cannot
                   reach into one.
     bench         the storefront view. A switcher bar plus a frame carrying
-                  this same page. The frame is what makes 375 ↔ 1280 real on a
+                  this same page. The frame is what makes 375 ↔ 1296 ↔ 1720 real on a
                   phone: it has its own viewport, so Horizon's media queries
                   fire on the frame width, not the device width.
 
@@ -41,7 +41,8 @@
     <div class="lab__bar" role="group" aria-label="Workbench controls">
       <span class="lab__legend">Width</span>
       <button type="button" class="lab__btn" data-lab-width="375" aria-pressed="true">375</button>
-      <button type="button" class="lab__btn" data-lab-width="1280" aria-pressed="false">1280</button>
+      <button type="button" class="lab__btn" data-lab-width="1296" aria-pressed="false">1296</button>
+      <button type="button" class="lab__btn" data-lab-width="1720" aria-pressed="false">1720</button>
 
       <span class="lab__sep" aria-hidden="true"></span>
 
@@ -193,11 +194,28 @@
     text-wrap: pretty;
   }
 
-  /* Bare mode on page.lab only: one block, alone, on white, nothing else. */
+  /* page.lab: one block, alone, on white, nothing else. Applies to the bench
+     page and to the framed document. */
   html.lab-no-chrome #header-group,
   html.lab-no-chrome footer,
-  html.lab-no-chrome .shopify-section-group-header-group {
+  html.lab-no-chrome .shopify-section-group-header-group,
+  html.lab-no-chrome .shopify-section-group-footer-group {
     display: none !important;
+  }
+
+  /* The framed document is a copy of this page, so Shopify's draft-theme bar
+     is written into it as well and covers the component. The bench page keeps
+     its own bar; the frame does not need a second one. The frame also has to
+     grow to its content, so nothing in it may clip. */
+  html.lab-bare-boot #PBarNextFrameWrapper {
+    display: none !important;
+  }
+
+  html.lab-bare-boot,
+  html.lab-bare-boot body {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
 {% endstylesheet %}
 
@@ -251,6 +269,11 @@
     if (!bar) return; // design mode renders the subject directly
 
     root.classList.add('lab--bench');
+    /* page.lab shows the component and nothing else, on the bench as well as
+       in bare mode. Without this the store header and footer wrap the bench. */
+    if (root.dataset.labHidesChrome === 'true') {
+      docEl.classList.add('lab-no-chrome');
+    }
 
     var stage = root.querySelector('[data-lab-stage]');
     var frame = root.querySelector('[data-lab-frame]');
@@ -268,6 +291,8 @@
       var scale = Math.min(1, available / state.width);
       frame.style.width = state.width + 'px';
       frame.style.transform = 'scale(' + scale + ')';
+      // Centre the frame in the stage instead of pinning it to the left edge.
+      frame.style.marginLeft = Math.max(0, (available - state.width * scale) / 2) + 'px';
 
       var inner = 1200;
       try {
@@ -277,7 +302,15 @@
              scrollHeight reports back once it is set, so measuring without
              this makes the stage grow and never shrink. */
           frame.style.height = '0px';
-          inner = Math.max(doc.body.scrollHeight, 320);
+          /* Measure the subject, not the body. Horizon can leave the framed
+             document with a fixed height and hidden overflow, and then
+             scrollHeight reports the frame's own height back: at 1280 the
+             bench showed 320px of a 2500px page. */
+          var inside = doc.querySelector('[data-lab-subject]');
+          var bottom = inside
+            ? inside.getBoundingClientRect().bottom + (frame.contentWindow.scrollY || 0)
+            : doc.body.scrollHeight;
+          inner = Math.max(Math.ceil(bottom), 320);
         }
       } catch (e) {
         /* same-origin only; the fallback height is fine */
