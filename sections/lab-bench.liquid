@@ -342,7 +342,8 @@
        script. What is real is how each script wraps, not the wording. */
     var translations = {};
     try {
-      translations = JSON.parse({{ section.settings.translations | default: '{}' | json }});
+      /* No Liquid default here: a literal '{}' ends the output tag early. */
+      translations = JSON.parse({{ section.settings.translations | json }} || '{}');
     } catch (e) {
       translations = {};
     }
