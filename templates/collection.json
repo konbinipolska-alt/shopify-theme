@@ -134,6 +134,9 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "chips": {
+              "type": "konbini-card-chips"
+            },
             "card-gallery": {
               "type": "_product-card-gallery",
               "settings": {
@@ -208,6 +211,7 @@
           },
           "block_order": [
             "card-gallery",
+            "chips",
             "product_title_4nY4eT",
             "price_EzJzMm",
             "swatches"

@@ -83,6 +83,19 @@
       <button type="button" class="lab__btn" data-lab-set="fit" data-lab-value="on" aria-pressed="true">Auto</button>
       <button type="button" class="lab__btn" data-lab-set="fit" data-lab-value="off" aria-pressed="false">Wył.</button>
 
+      <span class="lab__sep" aria-hidden="true"></span>
+
+      <span class="lab__legend">Cena</span>
+      <button type="button" class="lab__btn" data-lab-set="price" data-lab-value="foot" aria-pressed="true">Pod kartą</button>
+      <button type="button" class="lab__btn" data-lab-set="price" data-lab-value="chip" aria-pressed="false">Chip</button>
+
+      <span class="lab__group" data-lab-when="price=chip" hidden>
+        <button type="button" class="lab__btn" data-lab-toggle="was" aria-pressed="false">Przed rabatem</button>
+        <button type="button" class="lab__btn" data-lab-toggle="new" aria-pressed="false">Nowość</button>
+        <button type="button" class="lab__btn" data-lab-toggle="low" aria-pressed="false">Zapasy</button>
+        <button type="button" class="lab__btn" data-lab-toggle="best" aria-pressed="false">Bestseller</button>
+      </span>
+
       <span class="lab__scale" data-lab-scale></span>
     </div>
 
@@ -391,8 +404,12 @@
       desktop: '1296',
       view: 'grid',
       lang: 'pl',
-      fit: 'on'
+      fit: 'on',
+      price: 'foot'
     };
+    /* Independent on/off switches, only meaningful in chip mode. */
+    var toggles = { was: false, new: false, low: false, best: false };
+    var flagLabels = {};
 
     function press(group, value) {
       bar.querySelectorAll('[data-lab-set="' + group + '"]').forEach(function (btn) {
@@ -417,6 +434,21 @@
       html.setAttribute('data-lab-view', state.view);
       html.setAttribute('data-lab-screen', state.screen);
       html.setAttribute('data-konbini-fit', state.fit);
+      html.setAttribute('data-konbini-price', state.price);
+      html.setAttribute('data-konbini-was', toggles.was ? 'on' : 'off');
+      html.setAttribute(
+        'data-konbini-flags',
+        ['new', 'low', 'best'].filter(function (flag) { return toggles[flag]; }).join(' ')
+      );
+
+      /* Flag labels follow the language too. Polish is what the theme wrote. */
+      ['new', 'low', 'best'].forEach(function (flag) {
+        doc.querySelectorAll('.konbini-chip--' + flag).forEach(function (chip) {
+          if (chip.dataset.labOriginal === undefined) chip.dataset.labOriginal = chip.textContent.trim();
+          var label = state.lang === 'pl' ? null : (flagLabels[flag] || {})[state.lang];
+          chip.textContent = label || chip.dataset.labOriginal;
+        });
+      });
 
       /* Language: swap each card title for its placeholder translation and
          mark the language, so the per-language line rules apply. */
@@ -508,6 +540,13 @@
       Object.keys(state).forEach(function (key) {
         press(key, state[key]);
       });
+      bar.querySelectorAll('[data-lab-when]').forEach(function (group) {
+        var pair = group.getAttribute('data-lab-when').split('=');
+        group.hidden = state[pair[0]] !== pair[1];
+      });
+      bar.querySelectorAll('[data-lab-toggle]').forEach(function (btn) {
+        btn.setAttribute('aria-pressed', String(toggles[btn.getAttribute('data-lab-toggle')]));
+      });
       apply();
       size();
       // Titles re-wrap after a switch; measure once they have.
@@ -555,6 +594,14 @@
     }
 
     bar.addEventListener('click', function (event) {
+      var toggle = event.target.closest('button[data-lab-toggle]');
+      if (toggle) {
+        var name = toggle.getAttribute('data-lab-toggle');
+        toggles[name] = !toggles[name];
+        refresh();
+        return;
+      }
+
       var btn = event.target.closest('button[data-lab-set]');
       if (!btn) return;
       state[btn.getAttribute('data-lab-set')] = btn.getAttribute('data-lab-value');
@@ -569,7 +616,8 @@
         return response.ok ? response.json() : {};
       })
       .then(function (data) {
-        translations = data || {};
+        translations = (data && data.titles) || {};
+        flagLabels = (data && data.flags) || {};
         refresh();
       })
       .catch(function () {

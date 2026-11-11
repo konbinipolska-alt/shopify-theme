@@ -4,6 +4,10 @@
     class="shopify-design-mode"
   {% endif %}
   lang="{{ request.locale.iso_code }}"
+  {% comment %} KONBINI product card modes. The workbench switches these live. {% endcomment %}
+  data-konbini-price="{{ settings.konbini_card_price }}"
+  data-konbini-was="{% if settings.konbini_chip_was %}on{% else %}off{% endif %}"
+  data-konbini-flags="{% if settings.konbini_flag_new %}new {% endif %}{% if settings.konbini_flag_best %}best {% endif %}{% if settings.konbini_flag_low %}low{% endif %}"
 >
   <head>
     {%- if settings.favicon != blank -%}

@@ -1,0 +1,174 @@
+{%- doc -%}
+  KONBINI product card chips — ticket 11, the chip mode.
+
+  A row of small chips on the bottom-left of the photograph: the price, with
+  the struck pre-discount price inside it, then up to three flags. The row is
+  one line and never wraps: on a 165px card it holds the price, or the price
+  with its struck original, and little else. The clipping is deliberate, so a
+  card that cannot afford a chip shows it.
+
+  This block only writes the markup. What shows is decided by attributes on
+  <html>, set from the theme settings in layout/theme.liquid and switched live
+  by the workbench:
+
+    data-konbini-price="chip"     the price moves from the foot onto the photo
+    data-konbini-was="on"         the struck pre-discount price shows
+    data-konbini-flags="new best" which flags show
+
+  A sold-out product has no chips, as it has no quick-add.
+
+  Flags come from the data:
+    new   published within the "new for" window
+    best  tagged `bestseller`
+    low   tracked stock at or under the low-stock limit
+
+  On the workbench every flag is written for every card, so the room they need
+  can be measured on any product.
+{%- enddoc -%}
+
+{%- liquid
+  assign product = closest.product
+  assign on_bench = false
+  if template.suffix contains 'lab'
+    assign on_bench = true
+  endif
+
+  assign is_new = false
+  assign now = 'now' | date: '%s' | plus: 0
+  assign published = product.published_at | date: '%s' | plus: 0
+  assign age_days = now | minus: published | divided_by: 86400
+  if age_days <= settings.konbini_new_days
+    assign is_new = true
+  endif
+
+  assign is_best = false
+  for tag in product.tags
+    assign tag_lower = tag | downcase
+    if tag_lower == 'bestseller'
+      assign is_best = true
+      break
+    endif
+  endfor
+
+  assign is_low = false
+  assign variant = product.selected_or_first_available_variant
+  if variant.inventory_management == 'shopify' and variant.inventory_quantity > 0 and variant.inventory_quantity <= settings.konbini_low_stock
+    assign is_low = true
+  endif
+-%}
+
+{%- if product != blank and product.available -%}
+  <div class="konbini-chips" {{ block.shopify_attributes }}>
+    <div class="konbini-chips__row">
+      <span class="konbini-chip konbini-chip--price">
+        {%- if product.compare_at_price > product.price -%}
+          <s class="konbini-chip__was">{{ product.compare_at_price | money }}</s>
+        {%- endif -%}
+        {{- product.price | money -}}
+      </span>
+      {%- if is_new or on_bench -%}
+        <span class="konbini-chip konbini-chip--flag konbini-chip--new">{{ settings.konbini_label_new }}</span>
+      {%- endif -%}
+      {%- if is_low or on_bench -%}
+        <span class="konbini-chip konbini-chip--flag konbini-chip--low">{{ settings.konbini_label_low }}</span>
+      {%- endif -%}
+      {%- if is_best or on_bench -%}
+        <span class="konbini-chip konbini-chip--flag konbini-chip--best">{{ settings.konbini_label_best }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* A square laid over the photograph. The card content is a column whose
+     first child is the 1:1 tile, so a full-width square at the top covers it
+     exactly, without this block having to live inside Horizon's gallery. */
+  .product-card.product-card .product-card__content {
+    position: relative;
+  }
+
+  .konbini-chips {
+    position: absolute;
+    inset: 0 0 auto;
+    aspect-ratio: 1;
+    display: none;
+    align-items: flex-end;
+    padding: 8px;
+    /* Stops short of the quick-add disc instead of running under it. */
+    padding-inline-end: calc(16px + var(--konbini-quick-add-size, 32px));
+    pointer-events: none;
+  }
+
+  html[data-konbini-price='chip'] .konbini-chips {
+    display: flex;
+  }
+
+  /* The price is never in two places at once. */
+  html[data-konbini-price='chip'] .product-card.product-card product-price {
+    display: none;
+  }
+
+  /* One line, no wrap: the clipping is the finding, not a bug to paper over. */
+  .konbini-chips__row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* One height for every chip, held by the box and not by the type. Two font
+     sizes in one row is what makes chips ragged. */
+  .konbini-chip {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 4px;
+    border-radius: 2px;
+    background: #fff;
+    color: #232323;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .konbini-chip--flag {
+    display: none;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  html[data-konbini-flags~='new'] .konbini-chip--new,
+  html[data-konbini-flags~='low'] .konbini-chip--low,
+  html[data-konbini-flags~='best'] .konbini-chip--best {
+    display: inline-flex;
+  }
+
+  .konbini-chip__was {
+    display: none;
+    margin-inline-end: 4px;
+    color: #939393;
+    font-weight: 500;
+  }
+
+  html[data-konbini-was='on'] .konbini-chip__was {
+    display: inline;
+  }
+
+  @media screen and (min-width: 750px) {
+    .konbini-chips {
+      --konbini-quick-add-size: 36px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KONBINI card chips",
+  "tag": null
+}
+{% endschema %}
