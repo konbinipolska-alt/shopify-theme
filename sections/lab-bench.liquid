@@ -66,7 +66,7 @@
   {%- endunless -%}
 
   <div
-    class="lab__subject spacing-style"
+    class="lab__subject lab__subject--{{ section.settings.layout }} spacing-style"
     data-lab-subject
     style="background: {{ section.settings.stage_background | default: '#ffffff' }}; {% render 'spacing-padding', settings: section.settings %}"
   >
@@ -79,6 +79,34 @@
 </div>
 
 {% stylesheet %}
+  /* Grid layout: the collection grid's geometry, so a card is reviewed at the
+     size it ships at. 375px gives two 165px cards: 16px margins, 13px gap
+     (ticket 11). From 750px up, 400px cards 24px apart. */
+  .lab__subject--grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 13px;
+    padding-inline: 16px;
+  }
+
+  .lab__subject--grid > product-card {
+    display: grid;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .lab__subject--grid > .lab__specimen {
+    grid-column: 1 / -1;
+  }
+
+  @media screen and (min-width: 750px) {
+    .lab__subject--grid {
+      grid-template-columns: repeat(auto-fill, 400px);
+      gap: 24px;
+      padding-inline: 24px;
+    }
+  }
+
   .lab__bar {
     position: sticky;
     top: 0;
@@ -333,6 +361,16 @@
     {
       "type": "header",
       "content": "Stage"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "stack", "label": "Stack" },
+        { "value": "grid", "label": "Product grid" }
+      ],
+      "default": "stack"
     },
     {
       "type": "color",

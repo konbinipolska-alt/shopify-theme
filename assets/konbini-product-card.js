@@ -22,12 +22,12 @@
  */
 
 const TITLE = '.product-card__content > a.contents > .text-block p';
-const GRID = '.product-grid, .resource-list';
+const GRID = '.product-grid, .resource-list, .lab__subject--grid';
 const SHORT_LAST_LINE = 0.25;
 
 /* The size at the end of a catalogue title: "40 g", "1,47 l", "3 x 5 g",
-   "250 ml", "10 szt.". Titles with no size simply have none to protect. */
-const SIZE = /(\d+(?:[.,]\d+)?\s?(?:[x×]\s?\d+(?:[.,]\d+)?\s?)?(?:kg|g|ml|l|cm|mm|m|szt\.?|sztuk|tabl\.?|kaps\.?|saszetek|torebek|oz))$/i;
+   "250 ml", "10 szt.", "74 g (1 l)". Titles with no size simply have none to protect. */
+const SIZE = /(\d+(?:[.,]\d+)?\s?(?:[x×]\s?\d+(?:[.,]\d+)?\s?)?(?:kg|g|ml|l|cm|mm|m|szt\.?|sztuk|tabl\.?|kaps\.?|saszetek|torebek|oz)(?:\s?\(\d[^)]*\))?)$/i;
 
 /** @param {HTMLElement} title */
 function clampOf(title) {
