@@ -39,30 +39,63 @@
 <div class="lab" data-lab-hides-chrome="{{ hides_chrome }}">
   {%- unless request.design_mode -%}
     <div class="lab__bar" role="group" aria-label="Workbench controls">
-      <span class="lab__legend">Width</span>
-      <button type="button" class="lab__btn" data-lab-width="375" aria-pressed="true">375</button>
-      <button type="button" class="lab__btn" data-lab-width="1296" aria-pressed="false">1296</button>
-      <button type="button" class="lab__btn" data-lab-width="1720" aria-pressed="false">1720</button>
+      <span class="lab__legend">Ekran</span>
+      <button type="button" class="lab__btn" data-lab-set="screen" data-lab-value="mobile" aria-pressed="true">Mobile</button>
+      <button type="button" class="lab__btn" data-lab-set="screen" data-lab-value="desktop" aria-pressed="false">Desktop</button>
 
       <span class="lab__sep" aria-hidden="true"></span>
 
-      <span class="lab__legend">Content</span>
-      <button type="button" class="lab__btn" data-lab-long="off" aria-pressed="true">Real</button>
-      <button type="button" class="lab__btn" data-lab-long="pl" aria-pressed="false">Long pl</button>
-      <button type="button" class="lab__btn" data-lab-long="ja" aria-pressed="false">ja</button>
-      <button type="button" class="lab__btn" data-lab-long="ko" aria-pressed="false">ko</button>
+      <span class="lab__group" data-lab-for="mobile">
+        <span class="lab__legend">Telefon</span>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="375x667" data-lab-name="SE 3" aria-pressed="true">375·667</button>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="375x812" data-lab-name="13 mini" aria-pressed="false">375·812</button>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="390x844" data-lab-name="12 · 13 · 14" aria-pressed="false">390·844</button>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="393x852" data-lab-name="14 Pro · 15 · 16" aria-pressed="false">393·852</button>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="402x874" data-lab-name="16 Pro" aria-pressed="false">402·874</button>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="430x932" data-lab-name="15 Pro Max · 16 Plus" aria-pressed="false">430·932</button>
+        <button type="button" class="lab__btn" data-lab-set="phone" data-lab-value="440x956" data-lab-name="16 Pro Max" aria-pressed="false">440·956</button>
+      </span>
+
+      <span class="lab__group" data-lab-for="desktop" hidden>
+        <span class="lab__legend">Szerokość</span>
+        <button type="button" class="lab__btn" data-lab-set="desktop" data-lab-value="1296" aria-pressed="true">1296</button>
+        <button type="button" class="lab__btn" data-lab-set="desktop" data-lab-value="1720" aria-pressed="false">1720</button>
+      </span>
+
+      <span class="lab__sep" aria-hidden="true"></span>
+
+      <span class="lab__legend">Widok</span>
+      <button type="button" class="lab__btn" data-lab-set="view" data-lab-value="one" aria-pressed="false">1 karta</button>
+      <button type="button" class="lab__btn" data-lab-set="view" data-lab-value="row" aria-pressed="false">Rząd</button>
+      <button type="button" class="lab__btn" data-lab-set="view" data-lab-value="grid" aria-pressed="true">Kilka rzędów</button>
+
+      <span class="lab__sep" aria-hidden="true"></span>
+
+      <span class="lab__legend">Język</span>
+      <button type="button" class="lab__btn" data-lab-set="lang" data-lab-value="pl" aria-pressed="true">pl</button>
+      <button type="button" class="lab__btn" data-lab-set="lang" data-lab-value="en" aria-pressed="false">en</button>
+      <button type="button" class="lab__btn" data-lab-set="lang" data-lab-value="ja" aria-pressed="false">ja</button>
+      <button type="button" class="lab__btn" data-lab-set="lang" data-lab-value="ko" aria-pressed="false">ko</button>
+
+      <span class="lab__sep" aria-hidden="true"></span>
+
+      <span class="lab__legend">Wyrównanie</span>
+      <button type="button" class="lab__btn" data-lab-set="fit" data-lab-value="on" aria-pressed="true">Auto</button>
+      <button type="button" class="lab__btn" data-lab-set="fit" data-lab-value="off" aria-pressed="false">Wył.</button>
 
       <span class="lab__scale" data-lab-scale></span>
     </div>
 
     <div class="lab__stage" data-lab-stage>
-      <iframe
-        class="lab__frame"
-        title="Component under review"
-        data-lab-frame
-        src="about:blank"
-        loading="eager"
-      ></iframe>
+      <div class="lab__device" data-lab-device>
+        <iframe
+          class="lab__frame"
+          title="Component under review"
+          data-lab-frame
+          src="about:blank"
+          loading="eager"
+        ></iframe>
+      </div>
     </div>
   {%- endunless -%}
 
@@ -103,6 +136,7 @@
   @media screen and (min-width: 750px) {
     .lab__subject--grid {
       grid-template-columns: repeat(auto-fill, 400px);
+      justify-content: center;
       gap: 24px;
       padding-inline: 24px;
     }
@@ -165,16 +199,78 @@
     color: #8a8a8a;
   }
 
+  .lab__bar {
+    row-gap: 6px;
+  }
+
+  .lab__group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lab__group[hidden] {
+    display: none;
+  }
+
+  /* tint-50 stage, so a white phone and a white page both read against it. */
   .lab__stage {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 16px;
     overflow: hidden;
-    background: #e7e7e5;
+    background: #f4f4f4;
+  }
+
+  .lab__device {
+    flex: 0 0 auto;
+    transform-origin: top center;
+    background: #fff;
+  }
+
+  /* A hairline phone: one rule, a 46px corner and a bezel, nothing else. It
+     stops the mobile card being judged as a rectangle floating on white. */
+  .lab__device--phone {
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 46px;
+  }
+
+  .lab__device--phone .lab__frame {
+    border-radius: 36px;
   }
 
   .lab__frame {
     display: block;
     border: 0;
-    transform-origin: top left;
     background: #fff;
+  }
+
+  /* ---------- views, inside the framed page ---------- */
+  /* One card: a one-column card is not the two-column card left alone. It
+     takes the screen less 24px margins (ticket 11). */
+  html[data-lab-view='one'] .lab__subject--grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 24px;
+  }
+
+  html[data-lab-view='one'][data-lab-screen='desktop'] .lab__subject--grid {
+    grid-template-columns: 400px;
+    justify-content: center;
+  }
+
+  html[data-lab-view='one'] .lab__subject--grid > product-card:not(:first-of-type) {
+    display: none;
+  }
+
+  /* One row: whatever the column count, only the first row has height. */
+  html[data-lab-view='row'] .lab__subject--grid {
+    grid-template-rows: auto;
+    grid-auto-rows: 0;
+    row-gap: 0;
+    overflow: hidden;
   }
 
   /* The subject is rendered in every mode so the theme editor can reach it,
@@ -242,6 +338,15 @@
     };
     var locales = { off: null, pl: 'pl', ja: 'ja', ko: 'ko' };
 
+    /* Placeholder translations per product handle, written by the build
+       script. What is real is how each script wraps, not the wording. */
+    var translations = {};
+    try {
+      translations = JSON.parse({{ section.settings.translations | default: '{}' | json }});
+    } catch (e) {
+      translations = {};
+    }
+
     /* ---------- bare: the subject alone ---------- */
     if (isBare) {
       root.classList.add('lab--bare');
@@ -276,49 +381,139 @@
     }
 
     var stage = root.querySelector('[data-lab-stage]');
+    var device = root.querySelector('[data-lab-device]');
     var frame = root.querySelector('[data-lab-frame]');
     var readout = root.querySelector('[data-lab-scale]');
-    var state = { width: 375, long: 'off' };
+    var TITLE = '.product-card__content > a.contents > .text-block p';
+    var BEZEL = 10;
 
-    function press(attr, value) {
-      bar.querySelectorAll('[' + attr + ']').forEach(function (btn) {
-        btn.setAttribute('aria-pressed', String(btn.getAttribute(attr) === value));
+    var state = {
+      screen: 'mobile',
+      phone: '375x667',
+      desktop: '1296',
+      view: 'grid',
+      lang: 'pl',
+      fit: 'on'
+    };
+
+    function press(group, value) {
+      bar.querySelectorAll('[data-lab-set="' + group + '"]').forEach(function (btn) {
+        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-lab-value') === value));
       });
     }
 
-    function fit() {
-      var available = stage.clientWidth;
-      var scale = Math.min(1, available / state.width);
-      frame.style.width = state.width + 'px';
-      frame.style.transform = 'scale(' + scale + ')';
-      // Centre the frame in the stage instead of pinning it to the left edge.
-      frame.style.marginLeft = Math.max(0, (available - state.width * scale) / 2) + 'px';
-
-      var inner = 1200;
+    function inner() {
       try {
-        var doc = frame.contentDocument;
-        if (doc && doc.body) {
-          /* Collapse before measuring. The frame's own height is what
-             scrollHeight reports back once it is set, so measuring without
-             this makes the stage grow and never shrink. */
+        return frame.contentDocument && frame.contentDocument.body ? frame.contentDocument : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    /* Everything the framed page needs to know goes in as attributes on its
+       <html>, so a switch never reloads the frame. */
+    function apply() {
+      var doc = inner();
+      if (!doc) return;
+      var html = doc.documentElement;
+      html.setAttribute('data-lab-view', state.view);
+      html.setAttribute('data-lab-screen', state.screen);
+      html.setAttribute('data-konbini-fit', state.fit);
+
+      /* Language: swap each card title for its placeholder translation and
+         mark the language, so the per-language line rules apply. */
+      doc.querySelectorAll('product-card').forEach(function (card) {
+        var title = card.querySelector(TITLE);
+        var link = card.querySelector('a[href*="/products/"]');
+        if (!title || !link) return;
+
+        if (title.dataset.konbiniTitle !== undefined) {
+          title.textContent = title.dataset.konbiniTitle;
+          delete title.dataset.konbiniTitle;
+          title.removeAttribute('title');
+        }
+        if (title.dataset.labOriginal === undefined) {
+          title.dataset.labOriginal = title.textContent.trim();
+        }
+
+        var handle = link.getAttribute('href').split('/products/')[1].split(/[?#]/)[0];
+        var set = translations[handle] || {};
+        var text = state.lang === 'pl' ? title.dataset.labOriginal : set[state.lang];
+        title.textContent = text || title.dataset.labOriginal;
+        title.setAttribute('lang', text ? state.lang : 'pl');
+      });
+
+      frame.contentWindow.dispatchEvent(new Event('konbini:cards-changed'));
+    }
+
+    function size() {
+      var available = stage.clientWidth - 32;
+      var width;
+      var height = null;
+
+      if (state.screen === 'mobile') {
+        var parts = state.phone.split('x');
+        width = parseInt(parts[0], 10);
+        height = parseInt(parts[1], 10);
+      } else {
+        width = parseInt(state.desktop, 10);
+      }
+
+      var outer = state.screen === 'mobile' ? width + BEZEL * 2 : width;
+      var scale = Math.min(1, available / outer);
+
+      frame.style.width = width + 'px';
+      device.classList.toggle('lab__device--phone', state.screen === 'mobile');
+
+      if (height === null) {
+        /* Desktop: the frame grows to its content. Collapse before measuring,
+           and measure the subject rather than the body: Horizon can leave the
+           framed document at a fixed height with hidden overflow, and then
+           scrollHeight only reports the frame's own height back. */
+        var doc = inner();
+        height = 1200;
+        if (doc) {
           frame.style.height = '0px';
-          /* Measure the subject, not the body. Horizon can leave the framed
-             document with a fixed height and hidden overflow, and then
-             scrollHeight reports the frame's own height back: at 1280 the
-             bench showed 320px of a 2500px page. */
           var inside = doc.querySelector('[data-lab-subject]');
           var bottom = inside
             ? inside.getBoundingClientRect().bottom + (frame.contentWindow.scrollY || 0)
             : doc.body.scrollHeight;
-          inner = Math.max(Math.ceil(bottom), 320);
+          height = Math.max(Math.ceil(bottom), 320);
         }
-      } catch (e) {
-        /* same-origin only; the fallback height is fine */
       }
-      frame.style.height = inner + 'px';
-      stage.style.height = Math.ceil(inner * scale) + 'px';
+      /* Mobile: the frame is the phone's real height, so the page clips at
+         the fold and scrolls inside, as it does in the hand. */
+      frame.style.height = height + 'px';
 
-      readout.textContent = state.width + ' px · ' + Math.round(scale * 100) + '%';
+      device.style.transform = 'scale(' + scale + ')';
+      var box = device.getBoundingClientRect();
+      stage.style.height = Math.ceil(box.height + 48) + 'px';
+
+      var label;
+      if (state.screen === 'mobile') {
+        var chosen = bar.querySelector('[data-lab-set="phone"][aria-pressed="true"]');
+        label = 'iPhone ' + (chosen ? chosen.getAttribute('data-lab-name') : '') + ' · ' + width + ' × ' + height + ' px';
+      } else {
+        label = width + ' px';
+      }
+      var doc2 = inner();
+      var card = doc2 ? doc2.querySelector('product-card') : null;
+      if (card) label += ' · karta ' + Math.round(card.getBoundingClientRect().width) + ' px';
+      if (scale < 1) label += ' · ' + Math.round(scale * 100) + '%';
+      readout.textContent = label;
+    }
+
+    function refresh() {
+      bar.querySelectorAll('[data-lab-for]').forEach(function (group) {
+        group.hidden = group.getAttribute('data-lab-for') !== state.screen;
+      });
+      Object.keys(state).forEach(function (key) {
+        press(key, state[key]);
+      });
+      apply();
+      size();
+      // Titles re-wrap after a switch; measure once they have.
+      setTimeout(size, 250);
     }
 
     /* The frame is fed, not navigated.
@@ -342,7 +537,7 @@
         })
         .then(function (html) {
           html = html
-            .replace(/<html/i, '<html class="lab-bare-boot" data-lab-long="' + state.long + '"')
+            .replace(/<html/i, '<html class="lab-bare-boot"')
             .replace(/<head([^>]*)>/i, '<head$1><base href="' + window.location.origin + '/">');
 
           var doc = frame.contentDocument;
@@ -350,11 +545,11 @@
           doc.write(html);
           doc.close();
 
-          fit();
+          refresh();
           // Type, images and the section's own stylesheet settle after first
-          // paint; measure again once they have.
-          setTimeout(fit, 400);
-          setTimeout(fit, 1200);
+          // paint; apply and measure again once they have.
+          setTimeout(refresh, 600);
+          setTimeout(refresh, 1500);
         })
         .catch(function (error) {
           readout.textContent = 'load failed — ' + error.message;
@@ -362,24 +557,13 @@
     }
 
     bar.addEventListener('click', function (event) {
-      var btn = event.target.closest('button');
+      var btn = event.target.closest('button[data-lab-set]');
       if (!btn) return;
-
-      if (btn.hasAttribute('data-lab-width')) {
-        state.width = parseInt(btn.getAttribute('data-lab-width'), 10);
-        press('data-lab-width', String(state.width));
-        fit();
-        return;
-      }
-
-      if (btn.hasAttribute('data-lab-long')) {
-        state.long = btn.getAttribute('data-lab-long');
-        press('data-lab-long', state.long);
-        load();
-      }
+      state[btn.getAttribute('data-lab-set')] = btn.getAttribute('data-lab-value');
+      refresh();
     });
 
-    window.addEventListener('resize', fit);
+    window.addEventListener('resize', size);
     load();
   })();
 </script>
@@ -417,6 +601,12 @@
       "label": "Show the specimen line",
       "info": "A single line carrying data-lab-text, so the content switcher is visible even before a component under review carries the attribute itself.",
       "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "translations",
+      "label": "Card title translations (JSON)",
+      "info": "Written by scripts/build-lab-product-card.py. Keyed by product handle, then en, ja, ko."
     },
     {
       "type": "header",

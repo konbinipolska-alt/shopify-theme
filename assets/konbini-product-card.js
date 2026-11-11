@@ -167,6 +167,9 @@ function run() {
     if (title instanceof HTMLElement) restore(title);
   }
 
+  // The workbench can switch both rules off, to compare against plain CSS.
+  if (document.documentElement.dataset.konbiniFit === 'off') return;
+
   // Rule 1: titles over the clamp, anywhere a card appears.
   for (const title of document.querySelectorAll(`product-card ${TITLE}`)) {
     if (!(title instanceof HTMLElement) || title.offsetParent === null) continue;
@@ -227,6 +230,9 @@ const observer = new MutationObserver((mutations) => {
   if (cardsChanged) soon();
 });
 observer.observe(document.body, { childList: true, subtree: true });
+
+// The workbench swaps titles and switches without touching the grid.
+window.addEventListener('konbini:cards-changed', soon);
 
 document.fonts?.ready.then(soon);
 soon();
