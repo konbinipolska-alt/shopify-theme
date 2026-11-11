@@ -312,6 +312,19 @@
     display: none !important;
   }
 
+  /* The bench page is the stage and nothing else. Without this the page's own
+     white ground shows as a strip under the stage, wherever the stage is
+     shorter than the window. The framed copy keeps its white ground. */
+  html.lab-no-chrome:not(.lab-bare-boot),
+  html.lab-no-chrome:not(.lab-bare-boot) body {
+    background: #f4f4f4;
+  }
+
+  .lab--bench {
+    min-height: 100vh;
+    background: #f4f4f4;
+  }
+
   /* The framed document is a copy of this page, so Shopify's draft-theme bar
      is written into it as well and covers the component. The bench page keeps
      its own bar; the frame does not need a second one. The frame also has to
