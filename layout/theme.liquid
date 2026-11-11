@@ -155,5 +155,10 @@
 
     {% comment %} Not tied to quick-add: the card is styled whether or not the icon shows. {% endcomment %}
     {% render 'konbini-product-card-styles' %}
+    <script
+      src="{{ 'konbini-product-card.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
   </body>
 </html>

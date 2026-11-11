@@ -15,8 +15,10 @@
     lands on one line at whatever height that row's longest title needs.
   - Line height and breaking follow the language (ticket 30).
 
-  Not here yet: the size-keeping cut and row alignment (needs a script), the
-  sold-out wording, and the chip mode.
+  The size-keeping cut and row alignment live in
+  `assets/konbini-product-card.js`; this file styles what that script builds.
+
+  Not here yet: the sold-out wording and the chip mode.
 
   Tint values are written out until ticket 41 delivers tokens from Figma.
   Selectors repeat `.product-card` to outrank Horizon without depending on
@@ -96,6 +98,55 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       line-clamp: 3;
+    }
+  }
+
+  /* A cut title: the last line is a one-line window, then the size. On hover
+     of the card the hidden part slides through the window and back, slowly.
+     Hover only; a phone keeps the ellipsis. */
+  .konbini-title__window {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    white-space: nowrap;
+  }
+
+  .konbini-title__rest {
+    display: inline;
+  }
+
+  .konbini-title__size {
+    font-weight: inherit;
+    white-space: nowrap;
+  }
+
+  @media (hover: hover) {
+    .product-card:hover .konbini-title__window {
+      text-overflow: clip;
+    }
+
+    .product-card:hover .konbini-title__rest {
+      display: inline-block;
+      animation: konbini-title-slide var(--konbini-title-duration, 3s) ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes konbini-title-slide {
+    0%,
+    15% {
+      translate: 0;
+    }
+
+    85%,
+    100% {
+      translate: var(--konbini-title-shift, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-card:hover .konbini-title__rest {
+      animation: none;
     }
   }
 
